@@ -204,7 +204,7 @@ async def run_cost_analysis(
             priority=rec["priority"],
             implementation_effort=rec["implementation_effort"],
             status=rec["status"],
-            metadata=rec.get("metadata", {}),
+            recommendation_metadata=rec.get("metadata", {}),
         )
         db.add(recommendation)
 

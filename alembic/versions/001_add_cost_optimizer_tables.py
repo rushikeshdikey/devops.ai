@@ -92,7 +92,7 @@ def upgrade() -> None:
     sa.Column('priority', sa.String(length=20), nullable=False),
     sa.Column('implementation_effort', sa.String(length=20), nullable=False),
     sa.Column('status', sa.String(length=50), nullable=True),
-    sa.Column('metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('recommendation_metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['cost_analysis_id'], ['cost_analyses.id'], ),
     sa.PrimaryKeyConstraint('id')

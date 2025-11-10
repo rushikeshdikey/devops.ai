@@ -56,7 +56,7 @@ class CostRecommendationResponse(BaseModel):
     priority: str
     implementation_effort: str
     status: str
-    metadata: dict | None
+    recommendation_metadata: dict | None
 
     class Config:
         from_attributes = True
