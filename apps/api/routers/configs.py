@@ -66,6 +66,7 @@ async def create_config(
         title=config_data.title,
         type=config_data.type,
         tags=config_data.tags,
+        latest_version_id=None  # New configs have no versions
     )
 
     db.add(config)
@@ -95,6 +96,11 @@ async def list_configs(
     """List all configurations for a project."""
     result = await db.execute(select(Config).where(Config.project_id == project_id))
     configs = result.scalars().all()
+    
+    # Update latest_version_id for each config
+    for config in configs:
+        await config.update_latest_version_id(db)
+    
     return configs
 
 

@@ -60,7 +60,21 @@ variable "region" {
 async def create_tables():
     """Create all tables."""
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        # Drop tables in correct order to handle dependencies
+        from sqlalchemy import text
+        tables = [
+            "configs",
+            "config_versions",
+            "validation_runs",
+            "policies",
+            "audit_logs",
+            "projects",
+            "users"
+        ]
+        for table in tables:
+            await conn.execute(text(f"DROP TABLE IF EXISTS {table} CASCADE;"))
+        
+        # Create all tables
         await conn.run_sync(Base.metadata.create_all)
 
 
