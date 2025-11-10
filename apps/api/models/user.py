@@ -30,3 +30,9 @@ class User(Base):
         "ConfigVersion", back_populates="creator"
     )
     audit_logs: Mapped[list["AuditLog"]] = relationship("AuditLog", back_populates="actor")
+    subscription: Mapped["Subscription"] = relationship(
+        "Subscription", back_populates="user", uselist=False
+    )
+    cloud_accounts: Mapped[list["CloudAccount"]] = relationship(
+        "CloudAccount", back_populates="user", cascade="all, delete-orphan"
+    )
