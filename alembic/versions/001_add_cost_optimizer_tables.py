@@ -29,85 +29,6 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
 
-    # Create projects table
-    op.create_table('projects',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('created_by_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['created_by_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_projects_name'), 'projects', ['name'], unique=False)
-
-    # Create configs table
-    op.create_table('configs',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('project_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('title', sa.String(length=255), nullable=False),
-    sa.Column('type', sa.String(length=50), nullable=False),
-    sa.Column('latest_version_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('tags', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['project_id'], ['projects.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-
-    # Create config_versions table
-    op.create_table('config_versions',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('config_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('version_number', sa.Integer(), nullable=False),
-    sa.Column('content', sa.Text(), nullable=False),
-    sa.Column('checksum', sa.String(length=64), nullable=False),
-    sa.Column('created_by_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['config_id'], ['configs.id'], ),
-    sa.ForeignKeyConstraint(['created_by_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-
-    # Add foreign key for latest_version_id after config_versions is created
-    op.create_foreign_key(None, 'configs', 'config_versions', ['latest_version_id'], ['id'])
-
-    # Create validation_runs table
-    op.create_table('validation_runs',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('config_version_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('status', sa.String(length=50), nullable=False),
-    sa.Column('report', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['config_version_id'], ['config_versions.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-
-    # Create policies table
-    op.create_table('policies',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('scope', sa.String(length=50), nullable=False),
-    sa.Column('type', sa.String(length=50), nullable=False),
-    sa.Column('rule', sa.Text(), nullable=False),
-    sa.Column('project_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['project_id'], ['projects.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-
-    # Create audit_logs table
-    op.create_table('audit_logs',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('actor_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('action', sa.String(length=255), nullable=False),
-    sa.Column('subject_type', sa.String(length=255), nullable=False),
-    sa.Column('subject_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['actor_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-
     # Create subscriptions table
     op.create_table('subscriptions',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
@@ -183,11 +104,5 @@ def downgrade() -> None:
     op.drop_table('cost_analyses')
     op.drop_table('cloud_accounts')
     op.drop_table('subscriptions')
-    op.drop_table('audit_logs')
-    op.drop_table('policies')
-    op.drop_table('validation_runs')
-    op.drop_table('config_versions')
-    op.drop_table('configs')
-    op.drop_table('projects')
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')

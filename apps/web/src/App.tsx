@@ -4,11 +4,6 @@ import { useAuthStore } from './store/authStore'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
-import ProjectsPage from './pages/ProjectsPage'
-import ProjectDetailPage from './pages/ProjectDetailPage'
-import ConfigWorkspacePage from './pages/ConfigWorkspacePage'
-import PoliciesPage from './pages/PoliciesPage'
-import AuditLogPage from './pages/AuditLogPage'
 import CostOptimizerPage from './pages/CostOptimizerPage'
 import CloudAccountsPage from './pages/CloudAccountsPage'
 import CostAnalysisDetailPage from './pages/CostAnalysisDetailPage'
@@ -35,11 +30,6 @@ function App() {
           }
         >
           <Route index element={<DashboardPage />} />
-          <Route path="projects" element={<ProjectsPage />} />
-          <Route path="projects/:projectId" element={<ProjectDetailPage />} />
-          <Route path="configs/:configId" element={<ConfigWorkspacePage />} />
-          <Route path="policies" element={<PoliciesPage />} />
-          <Route path="audit" element={<AuditLogPage />} />
           <Route path="cost-optimizer" element={<CostOptimizerPage />} />
           <Route path="cost-optimizer/accounts" element={<CloudAccountsPage />} />
           <Route path="cost-optimizer/analysis/:analysisId" element={<CostAnalysisDetailPage />} />

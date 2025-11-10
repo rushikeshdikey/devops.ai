@@ -1,61 +1,11 @@
 """
-Seed script to populate the database with demo data.
+Seed script to populate the database with demo data for Cloud Cost Optimizer.
 """
 import asyncio
-import uuid
-import hashlib
-from sqlalchemy.ext.asyncio import AsyncSession
 from apps.api.core.database import AsyncSessionLocal, engine, Base
 from apps.api.core.security import get_password_hash
 from apps.api.models.user import User
-from apps.api.models.project import Project
-from apps.api.models.config import Config, ConfigVersion
-from apps.api.models.policy import Policy
 from apps.api.models.billing import Subscription
-
-
-K8S_DEPLOYMENT_YAML = """apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: api-server
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: api
-  template:
-    metadata:
-      labels:
-        app: api
-    spec:
-      containers:
-        - name: api
-          image: ghcr.io/example/api:1.2.3
-          resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-            requests:
-              cpu: "250m"
-              memory: "256Mi"
-"""
-
-TERRAFORM_CONFIG = """provider "aws" {
-  region = var.region
-}
-
-resource "aws_s3_bucket" "logs" {
-  bucket = "demo-logs"
-  tags = {
-    environment = "dev"
-    owner       = "platform-team"
-  }
-}
-
-variable "region" {
-  default = "ap-south-1"
-}
-"""
 
 
 async def create_tables():
@@ -136,91 +86,14 @@ async def seed_data():
 
         print(f"✓ Created FREE subscriptions for all demo users")
 
-        # Create project
-        demo_project = Project(
-            name="Demo Platform",
-            description="Demo project for DevOps automation",
-            created_by_id=admin_user.id,
-        )
-
-        db.add(demo_project)
-        await db.flush()
-
-        print(f"✓ Created project: {demo_project.name}")
-
-        # Create K8s config
-        k8s_config = Config(
-            project_id=demo_project.id,
-            title="API Server Deployment",
-            type="K8S_YAML",
-            tags=["kubernetes", "deployment", "api"],
-        )
-
-        db.add(k8s_config)
-        await db.flush()
-
-        # Create K8s version
-        k8s_checksum = hashlib.sha256(K8S_DEPLOYMENT_YAML.encode()).hexdigest()
-        k8s_version = ConfigVersion(
-            config_id=k8s_config.id,
-            version_number=1,
-            content=K8S_DEPLOYMENT_YAML,
-            checksum=k8s_checksum,
-            created_by_id=admin_user.id,
-        )
-
-        db.add(k8s_version)
-        await db.flush()
-
-        k8s_config.latest_version_id = k8s_version.id
-
-        print(f"✓ Created K8s config: {k8s_config.title}")
-
-        # Create Terraform config
-        tf_config = Config(
-            project_id=demo_project.id,
-            title="S3 Bucket Configuration",
-            type="TERRAFORM",
-            tags=["terraform", "aws", "s3"],
-        )
-
-        db.add(tf_config)
-        await db.flush()
-
-        # Create Terraform version
-        tf_checksum = hashlib.sha256(TERRAFORM_CONFIG.encode()).hexdigest()
-        tf_version = ConfigVersion(
-            config_id=tf_config.id,
-            version_number=1,
-            content=TERRAFORM_CONFIG,
-            checksum=tf_checksum,
-            created_by_id=admin_user.id,
-        )
-
-        db.add(tf_version)
-        await db.flush()
-
-        tf_config.latest_version_id = tf_version.id
-
-        print(f"✓ Created Terraform config: {tf_config.title}")
-
-        # Create global policy
-        policy = Policy(
-            name="Require Owner Tag and No Latest Image",
-            scope="GLOBAL",
-            type="OPA_MOCK",
-            rule="INCLUDES('owner') AND NOT MATCHES(':\\s*latest\\b')",
-            project_id=None,
-        )
-
-        db.add(policy)
-
-        print(f"✓ Created policy: {policy.name}")
-
         await db.commit()
 
         print("\n✅ Database seeded successfully!")
-        print("\nYou can now log in with any of the demo users.")
+        print("\nDemo users created:")
+        print("  - admin@demo.io / changeme (ADMIN role)")
+        print("  - maint@demo.io / changeme (MAINTAINER role)")
+        print("  - viewer@demo.io / changeme (VIEWER role)")
+        print("\nAll users have FREE subscriptions. Connect cloud accounts to start analyzing costs!")
 
 
 async def main():
