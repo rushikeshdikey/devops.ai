@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { Button } from './ui/Button'
-import { Home, FolderGit2, Shield, FileText, LogOut } from 'lucide-react'
+import { Home, FolderGit2, Shield, FileText, LogOut, DollarSign } from 'lucide-react'
 
 export default function Layout() {
   const navigate = useNavigate()
@@ -17,12 +17,18 @@ export default function Layout() {
       <nav className="border-b">
         <div className="flex h-16 items-center px-4 container mx-auto">
           <div className="flex items-center space-x-4 flex-1">
-            <h1 className="text-xl font-bold">DevOps Automation</h1>
+            <h1 className="text-xl font-bold">DevOps AI</h1>
             <div className="flex space-x-2 ml-8">
               <Link to="/">
                 <Button variant="ghost" size="sm">
                   <Home className="h-4 w-4 mr-2" />
                   Dashboard
+                </Button>
+              </Link>
+              <Link to="/cost-optimizer">
+                <Button variant="ghost" size="sm">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Cost Optimizer
                 </Button>
               </Link>
               <Link to="/projects">

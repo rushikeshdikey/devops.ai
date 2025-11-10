@@ -9,6 +9,10 @@ import ProjectDetailPage from './pages/ProjectDetailPage'
 import ConfigWorkspacePage from './pages/ConfigWorkspacePage'
 import PoliciesPage from './pages/PoliciesPage'
 import AuditLogPage from './pages/AuditLogPage'
+import CostOptimizerPage from './pages/CostOptimizerPage'
+import CloudAccountsPage from './pages/CloudAccountsPage'
+import CostAnalysisDetailPage from './pages/CostAnalysisDetailPage'
+import PricingPage from './pages/PricingPage'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -36,6 +40,10 @@ function App() {
           <Route path="configs/:configId" element={<ConfigWorkspacePage />} />
           <Route path="policies" element={<PoliciesPage />} />
           <Route path="audit" element={<AuditLogPage />} />
+          <Route path="cost-optimizer" element={<CostOptimizerPage />} />
+          <Route path="cost-optimizer/accounts" element={<CloudAccountsPage />} />
+          <Route path="cost-optimizer/analysis/:analysisId" element={<CostAnalysisDetailPage />} />
+          <Route path="pricing" element={<PricingPage />} />
         </Route>
       </Routes>
       <Toaster />
