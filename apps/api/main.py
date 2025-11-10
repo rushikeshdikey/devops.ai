@@ -1,14 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apps.api.core.config import get_settings
-from apps.api.routers import auth, users, projects, configs, validation, policies, audit, health
+from apps.api.routers import (
+    auth,
+    users,
+    projects,
+    configs,
+    validation,
+    policies,
+    audit,
+    health,
+    billing,
+    cost_optimizer,
+)
 
 settings = get_settings()
 
 app = FastAPI(
-    title="DevOps Automation API",
-    description="API for DevOps configuration management and validation",
-    version="1.0.0",
+    title="DevOps Automation & Cost Optimizer API",
+    description="API for DevOps configuration management, validation, and cloud cost optimization",
+    version="2.0.0",
 )
 
 # Configure CORS
@@ -29,6 +40,8 @@ app.include_router(validation.router, prefix="/api")
 app.include_router(policies.router, prefix="/api")
 app.include_router(audit.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
+app.include_router(billing.router, prefix="/api")
+app.include_router(cost_optimizer.router, prefix="/api")
 
 
 @app.get("/")

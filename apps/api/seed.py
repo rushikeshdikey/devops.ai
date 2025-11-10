@@ -11,6 +11,7 @@ from apps.api.models.user import User
 from apps.api.models.project import Project
 from apps.api.models.config import Config, ConfigVersion
 from apps.api.models.policy import Policy
+from apps.api.models.billing import Subscription
 
 
 K8S_DEPLOYMENT_YAML = """apiVersion: apps/v1
@@ -110,6 +111,30 @@ async def seed_data():
         print(f"  - admin@demo.io (ADMIN) - password: changeme")
         print(f"  - maint@demo.io (MAINTAINER) - password: changeme")
         print(f"  - viewer@demo.io (VIEWER) - password: changeme")
+
+        # Create FREE subscriptions for all users
+        admin_sub = Subscription(
+            user_id=admin_user.id,
+            plan="FREE",
+            status="ACTIVE",
+        )
+
+        maintainer_sub = Subscription(
+            user_id=maintainer_user.id,
+            plan="FREE",
+            status="ACTIVE",
+        )
+
+        viewer_sub = Subscription(
+            user_id=viewer_user.id,
+            plan="FREE",
+            status="ACTIVE",
+        )
+
+        db.add_all([admin_sub, maintainer_sub, viewer_sub])
+        await db.flush()
+
+        print(f"✓ Created FREE subscriptions for all demo users")
 
         # Create project
         demo_project = Project(
