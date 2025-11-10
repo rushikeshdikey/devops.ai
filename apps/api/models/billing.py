@@ -109,7 +109,7 @@ class CostRecommendation(Base):
     priority: Mapped[str] = mapped_column(String(20), nullable=False)  # HIGH, MEDIUM, LOW
     implementation_effort: Mapped[str] = mapped_column(String(20), nullable=False)  # EASY, MEDIUM, HARD
     status: Mapped[str] = mapped_column(String(50), default="PENDING")  # PENDING, APPLIED, DISMISSED
-    metadata: Mapped[dict] = mapped_column(JSONB, nullable=True)
+    recommendation_metadata: Mapped[dict] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )
