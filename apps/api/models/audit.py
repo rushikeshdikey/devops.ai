@@ -18,7 +18,7 @@ class AuditLog(Base):
     action: Mapped[str] = mapped_column(String(255), nullable=False)
     subject_type: Mapped[str] = mapped_column(String(255), nullable=False)
     subject_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
-    metadata: Mapped[dict] = mapped_column(JSONB, nullable=True, default=dict)
+    audit_metadata: Mapped[dict] = mapped_column(JSONB, nullable=True, default=dict)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow, nullable=False
     )

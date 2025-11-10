@@ -1,9 +1,16 @@
+from __future__ import annotations
 from datetime import datetime
-from sqlalchemy import String, DateTime, ForeignKey, Text, Integer
+from typing import TYPE_CHECKING
+from sqlalchemy import String, DateTime, ForeignKey, Text, Integer, event
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
 from apps.api.core.database import Base
+
+if TYPE_CHECKING:
+    from .user import User
+    from .project import Project
+    from .validation import ValidationRun
 
 
 class Config(Base):
@@ -19,9 +26,6 @@ class Config(Base):
     type: Mapped[str] = mapped_column(
         String(50), nullable=False
     )  # K8S_YAML, TERRAFORM, GENERIC_YAML
-    latest_version_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("config_versions.id"), nullable=True
-    )
     tags: Mapped[list] = mapped_column(JSONB, nullable=True, default=list)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow, nullable=False
@@ -32,12 +36,25 @@ class Config(Base):
     versions: Mapped[list["ConfigVersion"]] = relationship(
         "ConfigVersion",
         back_populates="config",
-        foreign_keys="ConfigVersion.config_id",
         cascade="all, delete-orphan",
+        order_by="desc(ConfigVersion.version_number)",
+        lazy="dynamic"
     )
-    latest_version: Mapped["ConfigVersion"] = relationship(
-        "ConfigVersion", foreign_keys=[latest_version_id], post_update=True
+
+    latest_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), nullable=True
     )
+
+    async def update_latest_version_id(self, db: AsyncSession) -> None:
+        """Update the latest version ID from the versions relationship."""
+        result = await db.execute(
+            select(ConfigVersion.id)
+            .where(ConfigVersion.config_id == self.id)
+            .order_by(ConfigVersion.version_number.desc())
+            .limit(1)
+        )
+        latest_id = result.scalar_one_or_none()
+        self.latest_version_id = latest_id
 
 
 class ConfigVersion(Base):

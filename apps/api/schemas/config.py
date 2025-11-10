@@ -14,7 +14,7 @@ class ConfigResponse(BaseModel):
     project_id: uuid.UUID
     title: str
     type: str
-    latest_version_id: uuid.UUID | None
+    latest_version_id: uuid.UUID | None = None
     tags: list[str]
     created_at: datetime
 
