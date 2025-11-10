@@ -23,13 +23,6 @@ class User(Base):
     )
 
     # Relationships
-    created_projects: Mapped[list["Project"]] = relationship(
-        "Project", back_populates="creator", foreign_keys="Project.created_by_id"
-    )
-    created_versions: Mapped[list["ConfigVersion"]] = relationship(
-        "ConfigVersion", back_populates="creator"
-    )
-    audit_logs: Mapped[list["AuditLog"]] = relationship("AuditLog", back_populates="actor")
     subscription: Mapped["Subscription"] = relationship(
         "Subscription", back_populates="user", uselist=False
     )

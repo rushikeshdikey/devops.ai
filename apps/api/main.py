@@ -4,11 +4,6 @@ from apps.api.core.config import get_settings
 from apps.api.routers import (
     auth,
     users,
-    projects,
-    configs,
-    validation,
-    policies,
-    audit,
     health,
     billing,
     cost_optimizer,
@@ -17,9 +12,9 @@ from apps.api.routers import (
 settings = get_settings()
 
 app = FastAPI(
-    title="DevOps Automation & Cost Optimizer API",
-    description="API for DevOps configuration management, validation, and cloud cost optimization",
-    version="2.0.0",
+    title="Cloud Cost Optimizer API",
+    description="AI-powered cloud cost optimization and savings recommendations",
+    version="1.0.0",
 )
 
 # Configure CORS
@@ -34,11 +29,6 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
-app.include_router(projects.router, prefix="/api")
-app.include_router(configs.router, prefix="/api")
-app.include_router(validation.router, prefix="/api")
-app.include_router(policies.router, prefix="/api")
-app.include_router(audit.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
 app.include_router(billing.router, prefix="/api")
 app.include_router(cost_optimizer.router, prefix="/api")
@@ -47,7 +37,11 @@ app.include_router(cost_optimizer.router, prefix="/api")
 @app.get("/")
 async def root():
     """Root endpoint."""
-    return {"message": "DevOps Automation API", "version": "1.0.0"}
+    return {
+        "message": "Cloud Cost Optimizer API",
+        "version": "1.0.0",
+        "description": "AI-powered cloud cost optimization",
+    }
 
 
 if __name__ == "__main__":
